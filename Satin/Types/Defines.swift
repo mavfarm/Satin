@@ -51,4 +51,3 @@ public enum FragmentTextureIndex: Int {
     case Custom4 = 5
     case Custom5 = 6
 }
-

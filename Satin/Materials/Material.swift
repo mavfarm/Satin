@@ -9,32 +9,47 @@
 import Metal
 
 protocol MaterialDelegate: AnyObject {
-    func materialUpdated(material: Material)
+    func materialUpdated()
+}
+
+public enum MaterialBlending {
+    case normal
+    case alpha
+    case additive
 }
 
 open class Material {
     weak var delegate: MaterialDelegate?
-    public var pipeline: MTLRenderPipelineState?
-    var context: Context? {
+    open var pipeline: MTLRenderPipelineState?
+    public var context: Context? {
         didSet {
             setup()
         }
     }
     
-    public var shadowTexture: MTLTexture?
-    
     public var onBind: ((_ renderEncoder: MTLRenderCommandEncoder) -> ())?
     public var onUpdate: (() -> ())?
     
-    init() {}
+    public init() {}
     
     public init(library: MTLLibrary?,
                 vertex: String,
                 fragment: String,
                 label: String,
-                context: Context) {
+                context: Context,
+                blending: MaterialBlending = .normal) {
         do {
-            pipeline = try makeRenderPipeline(library: library, vertex: vertex, fragment: fragment, label: label, context: context)
+            switch blending {
+            case .normal:
+                pipeline = try makeRenderPipeline(library: library, vertex: vertex, fragment: fragment, label: label, context: context)
+                break;
+            case .alpha:
+                pipeline = try makeAlphaRenderPipeline(library: library, vertex: vertex, fragment: fragment, label: label, context: context)
+                break;
+            case .additive:
+                pipeline = try makeAdditiveRenderPipeline(library: library, vertex: vertex, fragment: fragment, label: label, context: context)
+                break;
+            }
         }
         catch {
             print(error)
@@ -46,13 +61,13 @@ open class Material {
         self.pipeline = pipeline
     }
     
-    func setup() {}
+    open func setup() {}
     
-    func update() {
+    open func update() {
         onUpdate?()
     }
     
-    open func bind(_ renderEncoder: MTLRenderCommandEncoder) {     
+    open func bind(_ renderEncoder: MTLRenderCommandEncoder) {
         onBind?(renderEncoder)
     }
     

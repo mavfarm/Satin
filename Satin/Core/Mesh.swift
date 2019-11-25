@@ -27,9 +27,9 @@ open class Mesh: Object, GeometryDelegate, MaterialDelegate {
     
     public var instanceCount: Int = 1
     
-    public var uniformBufferIndex: Int = 0
+    var uniformBufferIndex: Int = 0
     public var uniformBufferOffset: Int = 0
-    public var vertexUniforms: UnsafeMutablePointer<VertexUniforms>!
+    var vertexUniforms: UnsafeMutablePointer<VertexUniforms>!
     public var vertexUniformsBuffer: MTLBuffer!
     
     public var depthStencilState: MTLDepthStencilState?
@@ -69,17 +69,9 @@ open class Mesh: Object, GeometryDelegate, MaterialDelegate {
         }
     }
     
-    public var shadowMaterial: Material? {
-        didSet {
-            if let shadowMaterial = self.shadowMaterial {
-                shadowMaterial.delegate = self
-            }
-            setupShadowMaterial()
-        }
-    }
-    
     public var visible: Bool = true
-        
+    
+    public var uniformBuffer: MTLBuffer?
     public var vertexBuffer: MTLBuffer?
     public var indexBuffer: MTLBuffer?
     
@@ -152,11 +144,6 @@ open class Mesh: Object, GeometryDelegate, MaterialDelegate {
         material.context = context
     }
     
-    func setupShadowMaterial() {
-        guard let context = self.context, let shadowMaterial = self.shadowMaterial else { return }
-        shadowMaterial.context = context
-    }
-    
     func updateUniforms(camera: Camera) {
         if vertexUniforms != nil {
             vertexUniforms[0].modelMatrix = worldMatrix
@@ -184,11 +171,11 @@ open class Mesh: Object, GeometryDelegate, MaterialDelegate {
         if let material = self.material {
             material.update()
         }
-        updateUniformsBuffer()
         super.update()
     }
     
     public func update(camera: Camera) {
+        updateUniformsBuffer()
         updateUniforms(camera: camera)
     }
     
@@ -197,16 +184,19 @@ open class Mesh: Object, GeometryDelegate, MaterialDelegate {
     }
     
     public func draw(renderEncoder: MTLRenderCommandEncoder, instanceCount: Int) {
-        guard let vertexBuffer = vertexBuffer, let depthStencilState = self.depthStencilState else { return }
-        
+        guard visible, let vertexBuffer = vertexBuffer, let material = self.material, let pipeline = material.pipeline, let depthStencilState = self.depthStencilState else { return }
+
         preDraw?(renderEncoder)
         
+        renderEncoder.setRenderPipelineState(pipeline)
         renderEncoder.setDepthStencilState(depthStencilState)
         renderEncoder.setFrontFacing(geometry.windingOrder)
         renderEncoder.setCullMode(cullMode)
         renderEncoder.setTriangleFillMode(triangleFillMode)
-        renderEncoder.setVertexBuffer(vertexBuffer, offset: 0, index: VertexBufferIndex.Vertices.rawValue)
-        renderEncoder.setVertexBuffer(vertexUniformsBuffer, offset: uniformBufferOffset, index: VertexBufferIndex.VertexUniforms.rawValue)
+        renderEncoder.setVertexBuffer(vertexBuffer, offset: 0, index: 0)
+        renderEncoder.setVertexBuffer(vertexUniformsBuffer, offset: uniformBufferOffset, index: 1)
+        
+        material.bind(renderEncoder)
         
         if let indexBuffer = indexBuffer {
             renderEncoder.drawIndexedPrimitives(
@@ -247,8 +237,7 @@ open class Mesh: Object, GeometryDelegate, MaterialDelegate {
     
     // MARK: - MaterialDelegate Conformance
     
-    func materialUpdated(material: Material) {        
+    func materialUpdated() {
         setupMaterial()
-        setupShadowMaterial()
     }
 }

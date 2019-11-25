@@ -1,14 +1,10 @@
 vertex VertexData basicColorVertex( uint vertexID [[vertex_id]],
-                                   constant Vertex *vertices [[buffer( VertexBufferVertices )]],
-                                   constant VertexUniforms &vertexUniforms [[buffer( VertexBufferVertexUniforms )]],
-                                   constant ShadowUniforms &shadowUniforms [[buffer( VertexBufferShadowUniforms )]])
+	constant Vertex *vertices [[buffer( 0 )]],
+	constant VertexUniforms &uniforms [[buffer( 1 )]] )
 {
-    const float4 position = vertices[vertexID].position;
 	VertexData out;
-	out.position = vertexUniforms.projectionMatrix * vertexUniforms.modelViewMatrix * position;
+	out.position = uniforms.projectionMatrix * uniforms.modelViewMatrix * vertices[vertexID].position;
 	out.uv = vertices[vertexID].uv;
-	out.normal = normalize( vertexUniforms.normalMatrix * vertices[vertexID].normal );
-    out.shadowPosition = shadowUniforms.shadowMatrix * vertexUniforms.modelMatrix * position;
+	out.normal = normalize( uniforms.normalMatrix * vertices[vertexID].normal );
 	return out;
 }
-

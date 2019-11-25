@@ -1,3 +1,13 @@
+//
+//  Constants.metal
+//  Satin-iOS
+//
+//  Created by Colin Duffy on 11/21/19.
+//
+
+#include <metal_stdlib>
+using namespace metal;
+
 typedef enum VertexBufferIndex {
     VertexBufferVertices = 0,
     VertexBufferVertexUniforms = 1,

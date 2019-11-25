@@ -61,6 +61,7 @@ open class PlaneGeometry: Geometry {
             for x in 0...rx {
                 let fx = Float(x)
                 let fy = Float(y)
+                
                 vertexData.append(
                     Vertex(
                         SIMD4<Float>(cx + fx * dx, cy + fy * dy, 0.0, 1.0),

@@ -29,12 +29,12 @@ open class BasicColorMaterial: Material {
         self.color = color
     }
 
-    override func setup() {
+    override open func setup() {
         setupPipeline()
         setupUniformsBuffer()
     }
 
-    override func update() {
+    override open func update() {
         updateUniformsBuffer()
         updateUniforms()
         super.update()
@@ -52,7 +52,7 @@ open class BasicColorMaterial: Material {
                     library: library,
                     vertex: "basicColorVertex",
                     fragment: "basicColorFragment",
-                    label: "Basic Color Material",
+                    label: "basicColorMaterial",
                     context: context)
             }
             catch {
@@ -86,7 +86,7 @@ open class BasicColorMaterial: Material {
     }
 
     open override func bind(_ renderEncoder: MTLRenderCommandEncoder) {
-        renderEncoder.setFragmentBuffer(uniformsBuffer, offset: uniformBufferOffset, index: FragmentBufferIndex.MaterialUniforms.rawValue)
+        renderEncoder.setFragmentBuffer(uniformsBuffer, offset: uniformBufferOffset, index: 0)
         super.bind(renderEncoder)
     }
 }
