@@ -21,7 +21,7 @@ public enum MaterialBlending {
 open class Material {
     weak var delegate: MaterialDelegate?
     open var pipeline: MTLRenderPipelineState?
-    public var context: Context? {
+    public var context: SatinContext? {
         didSet {
             setup()
         }
@@ -36,7 +36,7 @@ open class Material {
                 vertex: String,
                 fragment: String,
                 label: String,
-                context: Context,
+                context: SatinContext,
                 blending: MaterialBlending = .normal) {
         do {
             switch blending {

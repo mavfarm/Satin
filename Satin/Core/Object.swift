@@ -34,13 +34,13 @@ open class Object: Codable {
     
     public var id: String = UUID().uuidString
     
-    public var context: Context? {
+    public var context: SatinContext? {
         didSet {
             setup()
         }
     }
     
-    func setupContext(context: Context, object: Object) {
+    func setupContext(context: SatinContext, object: Object) {
         object.context = context        
     }
     

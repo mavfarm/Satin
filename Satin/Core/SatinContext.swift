@@ -8,7 +8,7 @@
 
 import Metal
 
-open class Context {
+open class SatinContext {
     var device: MTLDevice
     var sampleCount: Int
     var colorPixelFormat: MTLPixelFormat
