@@ -5,14 +5,14 @@ Pod::Spec.new do |spec|
   spec.description            = <<-DESC
   Satin is a swift based creative coding toolkit built on top of Metal. Satin contains classes & helpers that make create graphics with Metal fun and fast!
                    DESC
-  spec.homepage               = "https://github.com/Hi-Rez/Satin"
+  spec.homepage               = "https://github.com/mavfarm/Satin"
   spec.license                = { :type => "MIT", :file => "LICENSE" }
   spec.author                 = { "Reza Ali" => "reza@hi-rez.io" }
   spec.social_media_url       = "https://twitter.com/rezaali"
-  spec.source                 = { :git => "https://github.com/Hi-Rez/Satin.git", :tag => spec.version.to_s }
+  spec.source                 = { :git => "https://github.com/mavfarm/Satin.git", :tag => spec.version.to_s }
 
   spec.osx.deployment_target  = "10.14"
-  spec.ios.deployment_target  = "12.4"
+  spec.ios.deployment_target  = "11.0"
   spec.tvos.deployment_target = "12.4"
 
   spec.source_files           = "Satin/*.h", "Satin/**/*.{h,m,swift}"
