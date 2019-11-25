@@ -84,7 +84,11 @@ public func makeIndirectRenderPipeline(library: MTLLibrary?,
         pipelineStateDescriptor.colorAttachments[0].pixelFormat = context.colorPixelFormat
         pipelineStateDescriptor.depthAttachmentPixelFormat = context.depthPixelFormat
         pipelineStateDescriptor.stencilAttachmentPixelFormat = context.stencilPixelFormat
-        pipelineStateDescriptor.supportIndirectCommandBuffers = true
+        if #available(iOS 12.0, *) {
+            pipelineStateDescriptor.supportIndirectCommandBuffers = true
+        } else {
+            // Fallback on earlier versions
+        }
         return try device.makeRenderPipelineState(descriptor: pipelineStateDescriptor)
     }
     return nil
