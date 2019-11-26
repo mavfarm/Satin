@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		3BDEA067238DB86900A7C083 /* OBJLoader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3BDEA066238DB86900A7C083 /* OBJLoader.swift */; };
 		E13610322329834000A01AFF /* IcoSphereGeometry.swift in Sources */ = {isa = PBXBuildFile; fileRef = E13610302329834000A01AFF /* IcoSphereGeometry.swift */; };
 		E136103823299A0F00A01AFF /* CapsuleGeometry.swift in Sources */ = {isa = PBXBuildFile; fileRef = E136103623299A0F00A01AFF /* CapsuleGeometry.swift */; };
 		E136103C2329B6A600A01AFF /* ParametricGeometry.swift in Sources */ = {isa = PBXBuildFile; fileRef = E136103A2329B6A600A01AFF /* ParametricGeometry.swift */; };
@@ -46,6 +47,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		3BDEA066238DB86900A7C083 /* OBJLoader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OBJLoader.swift; sourceTree = "<group>"; };
 		E13610302329834000A01AFF /* IcoSphereGeometry.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IcoSphereGeometry.swift; sourceTree = "<group>"; };
 		E136103623299A0F00A01AFF /* CapsuleGeometry.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CapsuleGeometry.swift; sourceTree = "<group>"; };
 		E136103A2329B6A600A01AFF /* ParametricGeometry.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ParametricGeometry.swift; sourceTree = "<group>"; };
@@ -105,6 +107,14 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		3BDEA065238DB82000A7C083 /* Loaders */ = {
+			isa = PBXGroup;
+			children = (
+				3BDEA066238DB86900A7C083 /* OBJLoader.swift */,
+			);
+			path = Loaders;
+			sourceTree = "<group>";
+		};
 		E13C968522E6482C00D6FEB0 = {
 			isa = PBXGroup;
 			children = (
@@ -137,6 +147,7 @@
 				E19FA5C622E7CB8C00A43BB4 /* Types */,
 				E19FA5C022E7CB5100A43BB4 /* Core */,
 				E19FA5BF22E7CB4600A43BB4 /* Geometry */,
+				3BDEA065238DB82000A7C083 /* Loaders */,
 			);
 			path = Satin;
 			sourceTree = "<group>";
@@ -336,6 +347,7 @@
 				E188243222F8E391001DC5E9 /* OrthographicCamera.swift in Sources */,
 				E1F3751F2323120E00048102 /* CircleGeometry.swift in Sources */,
 				E19FA62F22E8B6F400A43BB4 /* Math.swift in Sources */,
+				3BDEA067238DB86900A7C083 /* OBJLoader.swift in Sources */,
 				E19FA63022E8B6F400A43BB4 /* Map.swift in Sources */,
 				E15B218D23061F4500A7038E /* PerspectiveCamera.swift in Sources */,
 				E193699B233BCC5200955737 /* Paths.swift in Sources */,
