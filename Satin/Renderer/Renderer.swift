@@ -15,7 +15,7 @@ open class Renderer
     
     public var scene: Object = Object()
     public var camera: Camera = Camera()
-    public var context: SatinContext?
+    public var context: Context?
     {
         didSet
         {
@@ -59,7 +59,7 @@ open class Renderer
     
     public var viewport: MTLViewport = MTLViewport()
     
-    public init(context: SatinContext,
+    public init(context: Context,
                 scene: Object,
                 camera: Camera)
     {

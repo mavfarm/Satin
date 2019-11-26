@@ -11,7 +11,7 @@ public func makeRenderPipeline(library: MTLLibrary?,
                                vertex: String,
                                fragment: String,
                                label: String,
-                               context: SatinContext) throws -> MTLRenderPipelineState? {
+                               context: Context) throws -> MTLRenderPipelineState? {
     if let library = library, let vertexProgram = library.makeFunction(name: vertex), let fragmentProgram = library.makeFunction(name: fragment) {
         let device = library.device
         let pipelineStateDescriptor = MTLRenderPipelineDescriptor()
@@ -30,7 +30,7 @@ public func makeAlphaRenderPipeline(library: MTLLibrary?,
                                vertex: String,
                                fragment: String,
                                label: String,
-                               context: SatinContext) throws -> MTLRenderPipelineState? {
+                               context: Context) throws -> MTLRenderPipelineState? {
     if let library = library, let vertexProgram = library.makeFunction(name: vertex), let fragmentProgram = library.makeFunction(name: fragment) {
         let device = library.device
         let pipelineStateDescriptor = MTLRenderPipelineDescriptor()
@@ -61,7 +61,7 @@ public func makeAdditiveRenderPipeline(library: MTLLibrary?,
                                vertex: String,
                                fragment: String,
                                label: String,
-                               context: SatinContext) throws -> MTLRenderPipelineState? {
+                               context: Context) throws -> MTLRenderPipelineState? {
     if let library = library, let vertexProgram = library.makeFunction(name: vertex), let fragmentProgram = library.makeFunction(name: fragment) {
         let device = library.device
         let pipelineStateDescriptor = MTLRenderPipelineDescriptor()
