@@ -103,7 +103,6 @@ open class Object: Codable {
     public var localMatrix: matrix_float4x4 {
         if updateMatrix {
             _localMatrix = simd_mul(simd_mul(translationMatrix, rotationMatrix), scaleMatrix)
-            updateMatrix = false
         }
         return _localMatrix
     }
@@ -120,7 +119,6 @@ open class Object: Codable {
             for child in children {
                 child.updateMatrix = true
             }
-            updateMatrix = false
         }
         return _worldMatrix
     }
