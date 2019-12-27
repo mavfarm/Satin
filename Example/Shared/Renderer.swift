@@ -36,9 +36,6 @@ class Renderer: Forge.Renderer {
     public static var device: MTLDevice!
     
     var perspCamera = PerspectiveCamera()
-    #if os(macOS)
-    var cameraController: GesturalCameraController!
-    #endif
     var renderer: Satin.Renderer!
     
     /// Scene
@@ -121,10 +118,6 @@ class Renderer: Forge.Renderer {
         perspCamera.position.z = 1000.0
         perspCamera.near = 0.001
         perspCamera.far = 10000.0
-        
-        #if os(macOS)
-        cameraController = GesturalCameraController(perspCamera)
-        #endif
     }
     
     func setupRenderer() {
@@ -136,10 +129,6 @@ class Renderer: Forge.Renderer {
     }
     
     override func update() {
-        #if os(macOS)
-        cameraController.update()
-        #endif
-        
         let now = Double( Date().currentTimeMillis() )
         elapsedTime = (now - startTime) / 1000.0
         
