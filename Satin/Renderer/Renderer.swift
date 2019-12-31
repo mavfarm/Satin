@@ -170,6 +170,23 @@ open class Renderer
         }
     }
     
+    public func draw(renderPassDescriptor: MTLRenderPassDescriptor, commandBuffer: MTLCommandBuffer, renderTarget: MTLTexture) {
+        if let context = self.context, context.sampleCount > 1
+        {
+            let resolveTexture = renderPassDescriptor.colorAttachments[0].resolveTexture
+            renderPassDescriptor.colorAttachments[0].resolveTexture = renderTarget
+            draw(renderPassDescriptor: renderPassDescriptor, commandBuffer: commandBuffer)
+            renderPassDescriptor.colorAttachments[0].resolveTexture = resolveTexture
+        }
+        else
+        {
+            let renderTexture = renderPassDescriptor.colorAttachments[0].texture
+            renderPassDescriptor.colorAttachments[0].texture = renderTarget
+            draw(renderPassDescriptor: renderPassDescriptor, commandBuffer: commandBuffer)
+            renderPassDescriptor.colorAttachments[0].texture = renderTexture
+        }
+    }
+    
     public func resize(_ size: (width: Float, height: Float))
     {
         self.size = size
