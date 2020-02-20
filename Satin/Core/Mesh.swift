@@ -85,7 +85,7 @@ open class Mesh: Object, GeometryDelegate, MaterialDelegate {
         fatalError("init(from:) has not been implemented")
     }
     
-    override func setup() {
+    override open func setup() {
         setupVertexBuffer()
         setupIndexBuffer()
         setupUniformBuffer()
