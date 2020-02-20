@@ -172,6 +172,10 @@ open class Object: Codable {
             }
         }
     }
+    
+    public func lookat(_ target: simd_float3) {
+        orientation = simd_quatf(from: simd_make_float3(0.0, 0.0, 1.0), to: target)
+    }
 }
 
 extension Object: Equatable {
