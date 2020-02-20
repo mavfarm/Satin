@@ -36,13 +36,34 @@ open class Object: Codable {
     
     public var context: Context? {
         didSet {
+            if contextSet {
+                return
+            }
+            
+            contextSet = context != nil
+            if !contextSet {
+                return
+            }
+            
+            // Trigger setup only once
             setup()
+            
+            if let context = self.context {
+                for child in self.children {
+                    if !child.contextSet {
+                        setupContext(context: context, object: child)
+                    }
+                }
+            }
         }
     }
     
     func setupContext(context: Context, object: Object) {
         object.context = context        
     }
+    
+    // Ensures setup() is only triggered once
+    public var contextSet: Bool = false
     
     public var position = simd_make_float3(0, 0, 0) {
         didSet {
@@ -125,7 +146,7 @@ open class Object: Codable {
     
     public init() {}
     
-    func setup() {}
+    open func setup() {}
     
     public func update() {
         onUpdate?()
