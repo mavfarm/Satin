@@ -9,7 +9,7 @@
 import Metal
 import MetalKit
 
-class PostProcessor {
+open class PostProcessor {
     
     var passes: [Pass]
     var fbo: FBO
@@ -19,23 +19,23 @@ class PostProcessor {
     internal var width: Float
     internal var height: Float
     
-    init() {
+    public init() {
         self.passes = []
         self.width = Float(UIScreen.main.bounds.width)
         self.height = Float(UIScreen.main.bounds.height)
         self.fbo = FBO(width: Int(width), height: Int(height), format: .bgra8Unorm_srgb)
     }
     
-    func add(_ pass: Pass) {
+    open func add(_ pass: Pass) {
         passes.append(pass)
         pass.resize((width, height))
     }
     
-    func swapBuffers() {
+    open func swapBuffers() {
         self.fbo.swapBuffers()
     }
     
-    func update() {
+    open func update() {
         for pass in passes {
             if pass.enabled {
                 pass.update()
@@ -43,7 +43,7 @@ class PostProcessor {
         }
     }
     
-    func draw(_ view: MTKView, _ renderPassDescriptor: MTLRenderPassDescriptor, _ commandBuffer: MTLCommandBuffer) {
+    open func draw(_ view: MTKView, _ renderPassDescriptor: MTLRenderPassDescriptor, _ commandBuffer: MTLCommandBuffer) {
         let totalPasses = passes.count
         if !enabled && totalPasses > 0 {
             passes[0].draw(view, renderPassDescriptor, commandBuffer, self.fbo.readBuffer)

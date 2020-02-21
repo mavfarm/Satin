@@ -9,7 +9,7 @@
 import Metal
 import MetalKit
 
-class RenderPass: Pass {
+open class RenderPass: Pass {
     
     var renderer: Satin.Renderer!
     var camera: Camera
@@ -18,7 +18,7 @@ class RenderPass: Pass {
     internal var context: Context
     internal var needsUpdate: Bool = true
     
-    init(_ context: Context, _ importScene: Object?, _ importCamera: Camera?) {
+    public init(_ context: Context, _ importScene: Object?, _ importCamera: Camera?) {
         self.context = context
         self.camera = OrthographicCamera(left: -0.5, right: 0.5, bottom: -0.5, top: 0.5, near: 0, far: 1)
         self.scene = Object()

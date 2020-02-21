@@ -9,14 +9,14 @@
 import Metal
 import MetalKit
 
-class Pass {
+open class Pass {
     
     var enabled: Bool = true
     var needsSwap: Bool = true
     var clear: Bool = false
     var renderToScreen: Bool = false
     
-    init() {
+    public init() {
         setup()
     }
     

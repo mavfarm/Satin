@@ -8,13 +8,13 @@
 
 import MetalKit
 
-class FSPass: RenderPass {
+open class FSPass: RenderPass {
     
     static let Geometry = PlaneGeometry(size: (1, 1))
         
     internal var mesh: Mesh?
     
-    var material: Material? {
+    public var material: Material? {
         get {
             return mesh?.material
         }
@@ -58,7 +58,7 @@ class FSPass: RenderPass {
     /**
      * Sets the texture to read from
      */
-    func setTexture(_ texture: MTLTexture) {
+    open func setTexture(_ texture: MTLTexture) {
         material?.onBind = { (_ renderEncoder: MTLRenderCommandEncoder) in
             renderEncoder.setFragmentTexture(texture, index: 0)
         }
