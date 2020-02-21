@@ -8,44 +8,56 @@
 
 import Metal
 import MetalKit
-
 import Forge
 import Satin
 
-struct CameraSettings {
-    static let dampening: Float = 0.04
-    static let downSpeed: Float = 0.2
-    static let upSpeed: Float = 0.2
+public func getMetal(_ path: String) -> URL? {
+    return Bundle.main.url(forResource: path, withExtension: "metal")
+}
+
+public func compileShader(
+    _ context: Satin.Context?,
+    _ shader: String,
+    _ vertex: String,
+    _ fragment: String,
+    _ label: String) -> MTLRenderPipelineState? {
+    let device = MTLCreateSystemDefaultDevice()!
+    let metalFileCompiler = MetalFileCompiler()
+    let materialPath = getMetal(shader)
     
-    static let maxRotationX: Float = 9.0 * (Float.pi / 180.0) /// in radians
-    static let maxRotationY: Float = 9.0 * (Float.pi / 180.0) /// in radians
-    static let distanceX: Float = 100.0
-    static let distanceY: Float = 100.0
+    do {
+        let source = try metalFileCompiler.parse(materialPath!)
+        
+        // potentially think about creating a library for all of Satin's Materials
+        let library = try device.makeLibrary(source: source, options: .none)
+        
+        return try makeRenderPipeline(
+            library: library,
+            vertex: vertex,
+            fragment: fragment,
+            label: label,
+            context: context!
+        )
+        
+    } catch {
+        print("\n\nCAN'T LOAD SHADER!!!", shader)
+        print(error)
+    }
     
-    static let buttonPadding: Float = 0.67
-    static let rotationLeft: Float = -CameraSettings.maxRotationX * CameraSettings.buttonPadding
-    static let rotationRight: Float = CameraSettings.maxRotationX * CameraSettings.buttonPadding
-    static let rotationTop: Float = CameraSettings.maxRotationY * CameraSettings.buttonPadding
-    static let rotationBottom: Float = -CameraSettings.maxRotationY * CameraSettings.buttonPadding
+    return nil
 }
 
 class Renderer: Forge.Renderer {
-    var scene: Object!
+    
     var context: Context!
-    
-    public static var device: MTLDevice!
-    
+    var scene: Object!
     var perspCamera = PerspectiveCamera()
-    var renderer: Satin.Renderer!
     
     /// Scene
     var background: Background!
-    var menu: Menu!
-    var lights: LightManager!
     
-    /// Time
-    private var startTime: Double = 0
-    private var elapsedTime: Double = 0
+    // Post
+    var post: PostProcessor!
     
     required init?(metalKitView: MTKView) {
         super.init(metalKitView: metalKitView)
@@ -54,97 +66,75 @@ class Renderer: Forge.Renderer {
     override func setupMtkView(_ metalKitView: MTKView) {
         metalKitView.depthStencilPixelFormat = .depth32Float_stencil8
         metalKitView.sampleCount = 4
-        Renderer.device = metalKitView.device!
     }
     
     override func setup() {
         setupContext()
-        setupLighting()
         setupScene()
-        setupCamera()
-        setupRenderer()
+        setupPost()
     }
     
     func setupContext() {
         context = Context(device, sampleCount, colorPixelFormat, depthPixelFormat, stencilPixelFormat)
     }
     
-    func setupLighting() {
-        lights = LightManager()
-        
-//        lights.addPointLight(light: PointLight(
-//            position: simd_make_float3(0, 0, -185),
-//            color: simd_make_float3(1),
-//            distance: 1000,
-//            decay: 1,
-//            shadow: 0,
-//            shadowBias: 0,
-//            shadowRadius: 1,
-//            shadowMapSize: simd_make_float2(0),
-//            shadowCameraNear: 1,
-//            shadowCameraFar: 1000
-//        ))
-        
-//        lights.addPointLight(PointLight(
-//            shadow: 0,
-//            shadowBias: 0,
-//            shadowRadius: 1,
-//            distance: 1000,
-//            decay: 1,
-//            shadowCameraNear: 1,
-//            shadowCameraFar: 1000,
-//            shadowMapSize: simd_make_float2(0),
-//            position: simd_make_float3(0, 0, -185),
-//            color: simd_make_float3(1)
-//        ))
-    }
-    
     func setupScene() {
         scene = Object()
+        scene.id = "Scene"
         
         /// Background
-        background = Background(context: context)
-        background.setup()
-        background.material.lights = lights
+        background = Background()
         scene.add(background)
         
-//        menu = Menu(context: context)
-//        menu.setup(library: library, device: device)
-//        scene.add(menu)
-    }
-    
-    func setupCamera() {
-//        perspCamera.position.z = 185.0
         perspCamera.position.z = 1000.0
         perspCamera.near = 0.001
         perspCamera.far = 10000.0
     }
     
-    func setupRenderer() {
-        renderer = Satin.Renderer(context: context,
-                                  scene: scene,
-                                  camera: perspCamera)
+    func setupPost() {
+        post = PostProcessor()
+//        post.enabled = false
         
-        startTime = Double( Date().currentTimeMillis() )
+        // Scene
+        let scenePass = RenderPass(context, scene, perspCamera)
+        post.add(scenePass)
+        
+        // Color pass
+        if let colorPipeline = compileShader(
+            self.context!,
+            "MetalShaders/materials/ColorPass",
+            "ColorPass_vertex",
+            "ColorPass_fragment",
+            "Color Material"
+            ) {
+            let material = Material(pipeline: colorPipeline)
+            let pass = FSPass(context, nil, nil)
+            pass.material = material
+            post.add(pass)
+        }
+        
+        // Blur pass
+        if let blurPipeline = compileShader(
+            self.context!,
+            "MetalShaders/materials/BlurPass",
+            "BlurPass_vertex",
+            "BlurPass_fragment",
+            "Blur Material"
+            ) {
+            let material = Material(pipeline: blurPipeline)
+            let pass = FSPass(context, nil, nil)
+            pass.material = material
+            post.add(pass)
+        }
     }
     
     override func update() {
-        let now = Double( Date().currentTimeMillis() )
-        elapsedTime = (now - startTime) / 1000.0
-        
-        /// Update variables
-        background.elapsedTime = elapsedTime
-        
-        lights.update()
-        scene.update()
-        
-        renderer.update()
+        post.update()
     }
     
     override func draw(_ view: MTKView, _ commandBuffer: MTLCommandBuffer) {
         guard let renderPassDescriptor = view.currentRenderPassDescriptor else { return }
-        renderer.draw(renderPassDescriptor: renderPassDescriptor, commandBuffer: commandBuffer)
-        
+        post.draw(view, renderPassDescriptor, commandBuffer)
     }
     
     override func resize(_ size: (width: Float, height: Float)) {
@@ -156,15 +146,6 @@ class Renderer: Forge.Renderer {
         
         perspCamera.aspect = aspect
         perspCamera.fov = fov
-        renderer.resize(size)
-    }
-    
-    public func setCameraRotation(x:Float, y:Float) {
-        perspCamera.orientation = simd_quaternion(x - Float.pi, simd_make_float3(0, 1, 0))
-        perspCamera.orientation *= simd_quaternion(y, simd_make_float3(1, 0, 0))
-    }
-    
-    public func resetCamera() {
-        perspCamera.orientation = simd_quaternion(-Float.pi, simd_make_float3(0, 1, 0))
+        post.resize(size)
     }
 }
