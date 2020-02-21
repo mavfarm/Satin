@@ -8,7 +8,7 @@
 
 import MetalKit
 
-open class FSPass: RenderPass {
+open class FSPass: ScenePass {
     
     static let Geometry = PlaneGeometry(size: (1, 1))
         

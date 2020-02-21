@@ -1,5 +1,5 @@
 //
-//  RenderPass.swift
+//  ScenePass.swift
 //  Satin
 //
 //  Created by Colin Duffy on 2/20/20.
@@ -9,7 +9,7 @@
 import Metal
 import MetalKit
 
-open class RenderPass: Pass {
+open class ScenePass: Pass {
     
     var renderer: Satin.Renderer!
     var camera: Camera
