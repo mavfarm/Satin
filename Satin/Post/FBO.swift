@@ -10,9 +10,9 @@ import Metal
 
 open class FBO {
     
-    var writeBuffer: MTLTexture
-    var readBuffer: MTLTexture
-    var format: MTLPixelFormat
+    public var writeBuffer: MTLTexture
+    public var readBuffer: MTLTexture
+    public var format: MTLPixelFormat
     
     public init(width: Int, height: Int, format: MTLPixelFormat) {
         self.writeBuffer = Pass.createRenderTarget(width: width, height: height, format: format)
