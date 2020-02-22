@@ -11,9 +11,9 @@ import MetalKit
 
 open class PostProcessor {
     
-    var passes: [Pass]
-    var fbo: FBO
-    var enabled: Bool = true
+    public var passes: [Pass]
+    public var fbo: FBO
+    public var enabled: Bool = true
     
     /// Internal
     internal var width: Float
@@ -46,7 +46,8 @@ open class PostProcessor {
     open func draw(_ view: MTKView, _ renderPassDescriptor: MTLRenderPassDescriptor, _ commandBuffer: MTLCommandBuffer) {
         let totalPasses = passes.count
         if !enabled && totalPasses > 0 {
-            passes[0].draw(view, renderPassDescriptor, commandBuffer, self.fbo.readBuffer)
+            passes[0].renderToScreen = true
+            passes[0].draw(view, renderPassDescriptor, commandBuffer, self.fbo)
             return
         }
         
@@ -54,12 +55,8 @@ open class PostProcessor {
         let lastPass = totalPasses - 1
         for pass in passes {
             if pass.enabled {
-                
-                if pass.renderToScreen || index == lastPass {
-                    pass.draw(view, renderPassDescriptor, commandBuffer, self.fbo.readBuffer)
-                } else {
-                    pass.draw(view, renderPassDescriptor, commandBuffer, self.fbo.readBuffer, self.fbo.writeBuffer)
-                }
+                pass.renderToScreen = pass.renderToScreen || index == lastPass
+                pass.draw(view, renderPassDescriptor, commandBuffer, self.fbo)
                 
                 if pass.needsSwap {
                     swapBuffers()
