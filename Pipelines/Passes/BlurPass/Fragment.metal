@@ -1,0 +1,38 @@
+constexpr sampler nearestSampler(mip_filter::nearest,
+                                 mag_filter::nearest,
+                                 min_filter::nearest,
+                                 s_address::repeat,
+                                 t_address::repeat,
+                                 r_address::repeat);
+
+float4 blur13(texture2d<float, access::sample> image,
+              sampler sampler2D,
+              float2 uv,
+              float2 resolution,
+              float2 direction) {
+    float4 color = float4(0.0);
+    float2 off1 = float2(1.4117647058823530) * direction;
+    float2 off2 = float2(3.2941176470588234) * direction;
+    float2 off3 = float2(5.1764705882352940) * direction;
+    
+    color += image.sample(sampler2D, uv) * 0.1964825501511404;
+    color += image.sample(sampler2D, uv + (off1 / resolution)) * 0.2969069646728344;
+    color += image.sample(sampler2D, uv - (off1 / resolution)) * 0.2969069646728344;
+    color += image.sample(sampler2D, uv + (off2 / resolution)) * 0.09447039785044732;
+    color += image.sample(sampler2D, uv - (off2 / resolution)) * 0.09447039785044732;
+    color += image.sample(sampler2D, uv + (off3 / resolution)) * 0.010381362401148057;
+    color += image.sample(sampler2D, uv - (off3 / resolution)) * 0.010381362401148057;
+    
+    return color;
+}
+
+fragment float4 BlurPass_fragment(VertexData in [[stage_in]],
+                                  texture2d<float, access::sample> inTexture [[texture(0)]],
+                                  constant BlurUniforms &blur [[buffer(0)]]) {
+    float2 uv = in.uv;
+    if(blur.flip) {
+        uv.y = 1.0 - uv.y;
+    }
+    float4 image = blur13(inTexture, nearestSampler, uv, blur.resolution, blur.direction);
+    return image;
+}
