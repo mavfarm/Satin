@@ -11,7 +11,7 @@ import simd
 open class PlaneGeometry: Geometry {
     public override init() {
         super.init()
-        self.setup(width: 2, height: 2, resX: 1, resY: 1, center: true)
+        self.setup(width: 1, height: 1, resX: 1, resY: 1, center: true)
     }
     
     public convenience init(size: Float) {
