@@ -38,9 +38,23 @@ class GameViewController: UIViewController {
         }
 
         renderer = newRenderer
-
         renderer.mtkView(mtkView, drawableSizeWillChange: mtkView.drawableSize)
-
         mtkView.delegate = renderer
+        
+        if let myView = self.view {
+            let pan = UIPanGestureRecognizer(target: self, action: #selector(panHandler))
+            myView.addGestureRecognizer(pan)
+        }
+    }
+    
+    @objc
+    func panHandler(_ recognizer: UIPanGestureRecognizer) {
+        if recognizer.state == .began || recognizer.state == .changed {
+            let piece = recognizer.view!
+            let pt = recognizer.location(in: piece)
+            let normalX = Float(pt.x / UIScreen.main.bounds.width)
+            let normalY = Float(pt.y / UIScreen.main.bounds.height)
+            renderer.touch(normalX, normalY)
+        }
     }
 }

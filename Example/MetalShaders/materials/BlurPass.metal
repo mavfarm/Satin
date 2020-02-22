@@ -77,9 +77,19 @@ float4 blur13(texture2d<float, access::sample> image,
     return color;
 }
 
+typedef struct {
+    float2 direction;
+    float2 resolution;
+    bool flip;
+} BlurUniforms;
+
 fragment float4 BlurPass_fragment(VertexData in [[stage_in]],
-                                   texture2d<float, access::sample> inTexture [[texture(0)]]) {
+                                  texture2d<float, access::sample> inTexture [[texture(0)]],
+                                  constant BlurUniforms &blur [[buffer(0)]]) {
     float2 uv = in.uv;
-    float4 image = blur13(inTexture, nearestSampler, uv, float2(375.0, 812.0), float2(5.0, 0.0));
+    if(blur.flip) {
+        uv.y = 1.0 - uv.y;
+    }
+    float4 image = blur13(inTexture, nearestSampler, uv, blur.resolution, blur.direction);
     return image;
 }

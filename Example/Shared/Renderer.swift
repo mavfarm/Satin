@@ -10,6 +10,7 @@ import Metal
 import MetalKit
 import Forge
 import Satin
+import simd
 
 public func getMetal(_ path: String) -> URL? {
     return Bundle.main.url(forResource: path, withExtension: "metal")
@@ -51,13 +52,11 @@ class Renderer: Forge.Renderer {
     
     var context: Context!
     var scene: Object!
-    var perspCamera = PerspectiveCamera()
-    
-    /// Scene
-    var background: Background!
+    var camera = PerspectiveCamera()
     
     // Post
     var post: PostProcessor!
+    var blurPass: BlurPass!
     
     required init?(metalKitView: MTKView) {
         super.init(metalKitView: metalKitView)
@@ -79,16 +78,23 @@ class Renderer: Forge.Renderer {
     }
     
     func setupScene() {
+        camera.position.z = 1000.0
+        camera.near = 0.001
+        camera.far = 10000.0
+        
         scene = Object()
         scene.id = "Scene"
         
         /// Background
-        background = Background()
-        scene.add(background)
-        
-        perspCamera.position.z = 1000.0
-        perspCamera.near = 0.001
-        perspCamera.far = 10000.0
+        let geometry = IcoSphereGeometry(radius: 400, res: 3)
+        let mesh = Mesh(
+            geometry: geometry,
+            material: NormalMaterial()
+        )
+        mesh.id = "Ball"
+        mesh.cullMode = .none
+        mesh.triangleFillMode = .lines
+        scene.add(mesh)
     }
     
     func setupPost() {
@@ -96,35 +102,33 @@ class Renderer: Forge.Renderer {
 //        post.enabled = false
         
         // Scene
-        let scenePass = RenderPass(context, scene, perspCamera)
+        let scenePass = ScenePass(context, scene, camera)
         post.add(scenePass)
         
-        // Color pass
-        if let colorPipeline = compileShader(
-            self.context!,
-            "MetalShaders/materials/ColorPass",
-            "ColorPass_vertex",
-            "ColorPass_fragment",
-            "Color Material"
-            ) {
-            let material = Material(pipeline: colorPipeline)
-            let pass = FSPass(context, nil, nil)
-            pass.material = material
-            post.add(pass)
+        // Blur pass
+        let useBlurPass: Bool = true
+        if useBlurPass {
+            blurPass = BlurPass(context, nil, nil)
+            blurPass.buffer.direction = simd_make_float2(2, 2)
+            post.add(blurPass)
         }
         
-        // Blur pass
-        if let blurPipeline = compileShader(
-            self.context!,
-            "MetalShaders/materials/BlurPass",
-            "BlurPass_vertex",
-            "BlurPass_fragment",
-            "Blur Material"
-            ) {
-            let material = Material(pipeline: blurPipeline)
-            let pass = FSPass(context, nil, nil)
-            pass.material = material
-            post.add(pass)
+        // Color pass
+        let useColorPass: Bool = false
+        if useColorPass {
+            if let colorPipeline = compileShader(
+                self.context!,
+                "MetalShaders/materials/ColorPass",
+                "ColorPass_vertex",
+                "ColorPass_fragment",
+                "Color Material"
+                ) {
+                let material = Material(pipeline: colorPipeline)
+                let pass = FSPass(context, nil, nil)
+                pass.material = material
+                pass.renderToScreen = true
+                post.add(pass)
+            }
         }
     }
     
@@ -141,11 +145,18 @@ class Renderer: Forge.Renderer {
         let aspect = size.width / size.height
         
         /// Auto-set the FOV
-        let distance = perspCamera.position.z
+        let distance = camera.position.z
         let fov = 2.0 * atan( (size.width / aspect) / (2.0 * distance) ) * (180.0 / Float.pi)
         
-        perspCamera.aspect = aspect
-        perspCamera.fov = fov
+        camera.aspect = aspect
+        camera.fov = fov
         post.resize(size)
+    }
+    
+    public func touch(_ posX: Float, _ posY: Float) {
+        blurPass.buffer.direction = simd_make_float2(
+            lerp(value: posX, minimum: -10, maximum: 10),
+            lerp(value: posY, minimum: -10, maximum: 10)
+        )
     }
 }

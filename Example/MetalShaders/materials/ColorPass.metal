@@ -58,7 +58,7 @@ constexpr sampler nearestSampler(mip_filter::nearest,
 
 fragment float4 ColorPass_fragment(VertexData in [[stage_in]],
                                    texture2d<float, access::sample> inTexture [[texture(0)]]) {
-    float2 uv = in.uv;
+    float2 uv = float2(in.uv.x, 1.0 - in.uv.y);
     float4 image = inTexture.sample(nearestSampler, uv);
     image.rgb += float3(0.1);
     return image;
