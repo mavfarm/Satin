@@ -7,7 +7,6 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		3B54A5CA24008C1200E9C397 /* ShaderPass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B54A5C924008C1200E9C397 /* ShaderPass.swift */; };
 		3B972B3B23FF7F6700348E91 /* FBO.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B972B3A23FF7F6700348E91 /* FBO.swift */; };
 		3B972B3D23FF7F8400348E91 /* FSPass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B972B3C23FF7F8400348E91 /* FSPass.swift */; };
 		3B972B3F23FF7FB800348E91 /* Pass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B972B3E23FF7FB800348E91 /* Pass.swift */; };
@@ -392,7 +391,6 @@
 				E136103823299A0F00A01AFF /* CapsuleGeometry.swift in Sources */,
 				E19FA63222E8B6F400A43BB4 /* Renderer.swift in Sources */,
 				E19FA63322E8B6F400A43BB4 /* Defines.swift in Sources */,
-				3B54A5CA24008C1200E9C397 /* ShaderPass.swift in Sources */,
 				E19FA63422E8B6F400A43BB4 /* Vertex.swift in Sources */,
 				3B972B3F23FF7FB800348E91 /* Pass.swift in Sources */,
 				E193699F233BE4A500955737 /* Context.swift in Sources */,
