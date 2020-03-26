@@ -7,9 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		3B1C0A4C242C147800C2AB85 /* SceneKitScene.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B1C0A4B242C147800C2AB85 /* SceneKitScene.swift */; };
 		3B393574235FF88F00DB11EE /* Date+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B71646A235E5A1000132B9F /* Date+Extension.swift */; };
-		3B6388202360DAA30036DEB5 /* Background.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B63881F2360DAA30036DEB5 /* Background.swift */; };
-		3B6388212360DAA30036DEB5 /* Background.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B63881F2360DAA30036DEB5 /* Background.swift */; };
 		3B6388262360FA750036DEB5 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 3B6388252360FA750036DEB5 /* Assets.xcassets */; };
 		3B6388272360FA750036DEB5 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 3B6388252360FA750036DEB5 /* Assets.xcassets */; };
 		3B71646B235E5A1000132B9F /* Date+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B71646A235E5A1000132B9F /* Date+Extension.swift */; };
@@ -39,7 +38,7 @@
 		1BA3AF82615EE2E049F243C5 /* Pods_Example_iOS.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Example_iOS.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		37E91F4961B25CC30A44A4F7 /* Pods-Example macOS.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Example macOS.release.xcconfig"; path = "Target Support Files/Pods-Example macOS/Pods-Example macOS.release.xcconfig"; sourceTree = "<group>"; };
 		3AE9BC2C7647E66653FA80BE /* Pods-Example iOS.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Example iOS.release.xcconfig"; path = "Target Support Files/Pods-Example iOS/Pods-Example iOS.release.xcconfig"; sourceTree = "<group>"; };
-		3B63881F2360DAA30036DEB5 /* Background.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Background.swift; sourceTree = "<group>"; };
+		3B1C0A4B242C147800C2AB85 /* SceneKitScene.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneKitScene.swift; sourceTree = "<group>"; };
 		3B6388252360FA750036DEB5 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		3B71646A235E5A1000132B9F /* Date+Extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Date+Extension.swift"; sourceTree = "<group>"; };
 		3B8FD4C323FF547100B0F999 /* MetalShaders */ = {isa = PBXFileReference; lastKnownFileType = folder; path = MetalShaders; sourceTree = "<group>"; };
@@ -98,14 +97,6 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
-		3B63881E2360DA980036DEB5 /* views */ = {
-			isa = PBXGroup;
-			children = (
-				3B63881F2360DAA30036DEB5 /* Background.swift */,
-			);
-			path = views;
-			sourceTree = "<group>";
-		};
 		9E58469676EB2E6F14C21A65 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
@@ -147,10 +138,10 @@
 		E13B5558230F3D42009E143D /* Shared */ = {
 			isa = PBXGroup;
 			children = (
-				E13B555A230F3D42009E143D /* Renderer.swift */,
 				3B71646A235E5A1000132B9F /* Date+Extension.swift */,
 				3BFE6F8E23637C8E00B89D4C /* Math.swift */,
-				3B63881E2360DA980036DEB5 /* views */,
+				E13B555A230F3D42009E143D /* Renderer.swift */,
+				3B1C0A4B242C147800C2AB85 /* SceneKitScene.swift */,
 			);
 			path = Shared;
 			sourceTree = "<group>";
@@ -459,7 +450,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				3B71646B235E5A1000132B9F /* Date+Extension.swift in Sources */,
-				3B6388202360DAA30036DEB5 /* Background.swift in Sources */,
+				3B1C0A4C242C147800C2AB85 /* SceneKitScene.swift in Sources */,
 				E13B5591230F3D44009E143D /* Renderer.swift in Sources */,
 				E13B5567230F3D44009E143D /* GameViewController.swift in Sources */,
 				E13B5565230F3D44009E143D /* AppDelegate.swift in Sources */,
@@ -482,7 +473,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				E13B5593230F3D44009E143D /* Renderer.swift in Sources */,
-				3B6388212360DAA30036DEB5 /* Background.swift in Sources */,
 				E13B5589230F3D44009E143D /* GameViewController.swift in Sources */,
 				E13B5587230F3D44009E143D /* AppDelegate.swift in Sources */,
 				3B393574235FF88F00DB11EE /* Date+Extension.swift in Sources */,

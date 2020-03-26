@@ -10,7 +10,37 @@ import Metal
 import MetalKit
 import Forge
 import Satin
+import SceneKit
 import simd
+
+func toRad(_ number: Float) -> Float {
+    return number * (.pi / 180)
+}
+
+extension simd_quatf {
+    
+    static let identity = simd_quaternion(0, simd_make_float3(0, 0, 0))
+    
+    static func fromRotation(_ xRot: Float, _ yRot: Float, _ zRot: Float) -> simd_quatf {
+        let xQuat = simd_quaternion(toRad(xRot), simd_make_float3(1, 0, 0))
+        let yQuat = simd_quaternion(toRad(yRot), simd_make_float3(0, 1, 0))
+        let zQuat = simd_quaternion(toRad(zRot), simd_make_float3(0, 0, -1))
+        return xQuat * yQuat * zQuat
+    }
+    
+    static func rotateX(_ matrix: simd_quatf, _ rotation: Float) -> simd_quatf {
+        return matrix * simd_quaternion(toRad(rotation), simd_make_float3(1, 0, 0))
+    }
+    
+    static func rotateY(_ matrix: simd_quatf, _ rotation: Float) -> simd_quatf {
+        return matrix * simd_quaternion(toRad(rotation), simd_make_float3(0, 1, 0))
+    }
+    
+    static func rotateZ(_ matrix: simd_quatf, _ rotation: Float) -> simd_quatf {
+        return matrix * simd_quaternion(toRad(rotation), simd_make_float3(0, 0, -1))
+    }
+    
+}
 
 public func getMetal(_ path: String) -> URL? {
     return Bundle.main.url(forResource: path, withExtension: "metal")
@@ -50,9 +80,14 @@ public func compileShader(
 
 class Renderer: Forge.Renderer {
     
+    var sceneKit: SceneKitScene!
+    
     var context: Context!
     var scene: Object!
     var camera = PerspectiveCamera()
+    var mesh: Mesh!
+    
+    var texture: MTLTexture!
     
     // Post
     var post: PostProcessor!
@@ -64,7 +99,14 @@ class Renderer: Forge.Renderer {
     
     override func setupMtkView(_ metalKitView: MTKView) {
         metalKitView.depthStencilPixelFormat = .depth32Float_stencil8
-        metalKitView.sampleCount = 4
+        metalKitView.sampleCount = 1
+        
+        let width = Int(UIScreen.main.bounds.width)
+        let height = Int(UIScreen.main.bounds.height)
+        self.texture = Pass.createRenderTarget(width: width, height: height, format: .bgra8Unorm_srgb)
+        
+        sceneKit = SceneKitScene(device: device)
+        sceneKit.setupScene(width, height)
     }
     
     override func setup() {
@@ -78,28 +120,38 @@ class Renderer: Forge.Renderer {
     }
     
     func setupScene() {
-        camera.position.z = 1000.0
+        camera.position.z = 800.0
         camera.near = 0.001
         camera.far = 10000.0
+        camera.fov = 60
         
         scene = Object()
         scene.id = "Scene"
         
         /// Background
-        let geometry = IcoSphereGeometry(radius: 400, res: 3)
-        let mesh = Mesh(
+        let material = ImageMaterial()
+        material.texture = texture
+//        let material = NormalMaterial()
+//        let material = UVMaterial()
+        
+        let geometry = BoxGeometry(
+            size: (
+                Float(UIScreen.main.bounds.width),
+                Float(UIScreen.main.bounds.height),
+                100
+            )
+        )
+        mesh = Mesh(
             geometry: geometry,
-            material: NormalMaterial()
+            material: material
         )
         mesh.id = "Ball"
         mesh.cullMode = .none
-        mesh.triangleFillMode = .lines
         scene.add(mesh)
     }
     
     func setupPost() {
         post = PostProcessor()
-//        post.enabled = false
         
         // Scene
         let scenePass = ScenePass(context, scene, camera)
@@ -133,23 +185,20 @@ class Renderer: Forge.Renderer {
     }
     
     override func update() {
+        mesh.orientation = simd_quatf.rotateY(mesh.orientation, 1)
         post.update()
     }
     
     override func draw(_ view: MTKView, _ commandBuffer: MTLCommandBuffer) {
         guard let renderPassDescriptor = view.currentRenderPassDescriptor else { return }
+        
+        sceneKit.draw(commandQueue, texture)
         post.draw(view, renderPassDescriptor, commandBuffer)
     }
     
     override func resize(_ size: (width: Float, height: Float)) {
         let aspect = size.width / size.height
-        
-        /// Auto-set the FOV
-        let distance = camera.position.z
-        let fov = 2.0 * atan( (size.width / aspect) / (2.0 * distance) ) * (180.0 / Float.pi)
-        
         camera.aspect = aspect
-        camera.fov = fov
         post.resize(size)
     }
     

@@ -38,7 +38,7 @@ open class Pass {
         ///
     }
     
-    static func createRenderTarget(width: Int, height: Int, format: MTLPixelFormat) -> MTLTexture {
+    static public func createRenderTarget(width: Int, height: Int, format: MTLPixelFormat) -> MTLTexture {
         let texDesc = MTLTextureDescriptor.texture2DDescriptor(
             pixelFormat: format,
             width: width,
